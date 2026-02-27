@@ -86,10 +86,49 @@ async function tripsSortedByDistance() {
     });
 }
 
+async function addTrip(rowId, routeName, routeStartingPoint, region, difficulty, distance, portageDistance, description, image, password) {
+    return new Promise((resolve, reject) => {
+        db.run('INSERT INTO trips (rowid, routeName, routeStartingPoint, region, difficulty, distance, portageDistance, description, image, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [rowId, routeName, routeStartingPoint, region, difficulty, distance, portageDistance, description, image, password], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.lastID);
+            }
+        });
+    });
+}
+
+async function updateTrip(id, routeName, routeStartingPoint, region, difficulty, distance, portageDistance, description, image, password) {
+    return new Promise((resolve, reject) => {
+        db.run('UPDATE trips SET routeName = ?, routeStartingPoint = ?, region = ?, difficulty = ?, distance = ?, portageDistance = ?, description = ?, image = ?, password = ? WHERE rowid = ?', [routeName, routeStartingPoint, region, difficulty, distance, portageDistance, description, image, password, id], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.changes);
+            }
+        });
+    });
+}
+
+async function deleteTrip(id) {
+    return new Promise((resolve, reject) => {
+        db.run('DELETE FROM trips WHERE rowid = ?', [id], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.changes);
+            }
+        });
+    });
+}
+
 module.exports = {
     initializeDatabase,
     getAllTrips,
     getTripById,
     tripsSortedByRegion,
-    tripsSortedByDifficulty
+    tripsSortedByDifficulty,
+    addTrip,
+    updateTrip,
+    deleteTrip
 };
