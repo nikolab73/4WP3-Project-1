@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { init } = require('./app.ctrl');
 
 const dbPath = path.join(__dirname, 'trips.db');
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -22,3 +23,19 @@ async function initializeDatabase() {
         password TEXT NOT NULL
     )`);
 }
+
+async function getAllTrips() {
+    return new Promise((resolve, reject) => {
+        db.all('SELECT rowid, * FROM trips', (err, rows) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(rows);
+        });
+    });
+}
+
+module.exports = {
+    initializeDatabase,
+    getAllTrips
+};
